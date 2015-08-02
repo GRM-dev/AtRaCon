@@ -64,3 +64,4 @@ $RECYCLE.BIN/
 */.settings/
 *.log
 priv_*
+*.log*
