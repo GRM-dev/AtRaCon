@@ -1,0 +1,38 @@
+group="pl.grm.atracon"
+description="AtRaCon Server Connector - to AtRaCon project."
+def archieveFileName="AtRaCon-Server"
+mainClassName="pl.grm.atracon.server.SMain"
+
+dependencies {
+	compile group: 'mysql',name: 'mysql-connector-java', version: '5.1.35'
+}
+
+jar {
+	manifest {
+		attributes 'Main-Class': mainClassName
+		attributes "Class-Path": configurations.compile.collect { it.getName() }.join(' ')
+	}
+}
+
+pmd {
+  ignoreFailures = true
+  sourceSets = [sourceSets.main]
+  reportsDir = file("$project.buildDir/reports/pmd")
+  ruleSets = [
+    "java-basic",
+    "java-braces"
+  ]
+}
+
+check << {
+  File outDir = new File('build/reports/pmd/')
+  outDir.mkdirs()
+  ant.taskdef(name: 'cpd', classname: 'net.sourceforge.pmd.cpd.CPDTask',
+    classpath: configurations.pmd.asPath)
+  ant.cpd(minimumTokenCount: '100', format: 'xml',
+    outputFile: new File(outDir , 'cpd.xml')) {
+    fileset(dir: "src/main/java") {
+      include(name: '**/*.java')
+    }
+  }
+}
