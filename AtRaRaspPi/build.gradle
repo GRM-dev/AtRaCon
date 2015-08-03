@@ -3,6 +3,10 @@ description="Raspberry Pi connector - to AtRaCon project."
 def archieveFileName="AtRaCon-RP"
 mainClassName="pl.grm.atracon.rasp.RMain"
 
+dependencies {
+	compile 'com.pi4j:pi4j-core:1.0'
+ }
+
 jar {
 	manifest {
 		attributes 'Main-Class': mainClassName

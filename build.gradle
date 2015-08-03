@@ -1,3 +1,6 @@
+def vM = 0
+def vN = 1
+
 subprojects {
   apply plugin: 'java'
   apply plugin: 'pmd'
@@ -5,9 +8,9 @@ subprojects {
   apply plugin: 'eclipse'
  
   if (hasProperty("teamcity")) {
-	    version="0.0.1."+teamcity['build.number']
+	    version="0."+vM+"."+vN+"."+teamcity['build.number']
 	} else {
-	    version="0.0.1.n"
+	    version="0."+vM+"."+vN
 	}
   
   repositories {

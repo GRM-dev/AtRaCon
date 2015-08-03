@@ -9,6 +9,7 @@ public class SMain {
 			System.err.println("Cannot create log handler");
 		}
 		ARCLogger.info("Starting AtRaCon server ...");
+
 		ARCLogger.info("Stopping AtRaCon server.");
 		ARCLogger.closeLogger();
 	}

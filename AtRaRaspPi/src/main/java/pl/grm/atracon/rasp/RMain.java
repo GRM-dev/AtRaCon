@@ -9,6 +9,8 @@ public class RMain {
 			System.err.println("Cannot create log handler");
 		}
 		ARCLogger.info("Starting AtRaCon RaspberryPi Server Extenion ...");
+		// GpioController controller = GpioFactory.getInstance();
+		// controller.
 		ARCLogger.info("Stopping AtRaCon RaspberryPi Server Extenion.");
 		ARCLogger.closeLogger();
 	}

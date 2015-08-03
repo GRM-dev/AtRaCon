@@ -34,7 +34,8 @@ public class ARCLogger {
 	}
 
 	public static void setLogger(Logger logger) {
-		ARCLogger.logger = logger;
+		if (logger != null)
+			ARCLogger.logger = logger;
 	}
 
 	/**
@@ -43,6 +44,9 @@ public class ARCLogger {
 	 * @return tru if logger created and is valid
 	 */
 	public static boolean setupLogger(String logFileName) {
+		if (logFileName == null || logFileName == "") {
+			logFileName = "log.log";
+		}
 		Logger logger = Logger.getLogger(logFileName);
 		FileHandler fHandler = null;
 		File mainDir = new File(Constants.LOGSFOLDERNAME);
@@ -66,9 +70,11 @@ public class ARCLogger {
 	}
 
 	public static void closeLogger() {
-		Handler handler = logger.getHandlers()[0];
-		logger.removeHandler(handler);
-		handler.close();
+		if (logger != null) {
+			Handler handler = logger.getHandlers()[0];
+			logger.removeHandler(handler);
+			handler.close();
+		}
 	}
 
 	public static void printDebugFieldValue(Object obj, String... stringsFieldNames) {
