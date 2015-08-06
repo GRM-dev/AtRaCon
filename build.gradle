@@ -1,11 +1,22 @@
 def vM = 0
 def vN = 1
 
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+         classpath 'com.github.rholder:gradle-one-jar:1.0.4'
+    }
+}
+ 
+
 subprojects {
   apply plugin: 'java'
   apply plugin: 'pmd'
   apply plugin: 'application'
   apply plugin: 'eclipse'
+  apply plugin: 'gradle-one-jar'
  
   if (hasProperty("teamcity")) {
 	    version="0."+vM+"."+vN+"."+teamcity['build.number']
