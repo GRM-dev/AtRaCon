@@ -56,7 +56,7 @@ public class ARCLogger {
 					throw new IOException("Cannot create logs '" + Constants.LOGSFOLDERNAME + "' folder!");
 				}
 			}
-			fHandler = new FileHandler(Constants.LOGSFOLDERNAME + logFileName, 1048476, 3, true);
+			fHandler = new FileHandler(Constants.LOGSFOLDERNAME + logFileName, 1048476, 1, true);
 			SimpleFormatter formatter = new SimpleFormatter();
 			fHandler.setFormatter(formatter);
 		} catch (SecurityException | IOException e) {

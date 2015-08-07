@@ -45,12 +45,14 @@ public class ConfigFileManager {
 			for (Iterator<String> it = config.keySet().iterator(); it.hasNext();) {
 				String key = it.next();
 				ConfigData value = config.get(key);
-				if ((value.getValueType() == ValueType.STRING)) {
-					ini.add("conf", key, value.getValue());
-				} else if (value.getValueType() == ValueType.DOUBLE) {
-					ini.add("conf", key, Double.valueOf(value.getValue()));
-				} else if (value.getValueType() == ValueType.INT) {
-					ini.add("conf", key, Integer.valueOf(value.getValue()));
+				if (!ini.get("conf").containsKey(key) || ini.get("conf").get(key) != value.getValue()) {
+					if ((value.getValueType() == ValueType.STRING)) {
+						ini.add("conf", key, value.getValue());
+					} else if (value.getValueType() == ValueType.DOUBLE) {
+						ini.add("conf", key, Double.valueOf(value.getValue()));
+					} else if (value.getValueType() == ValueType.INT) {
+						ini.add("conf", key, Integer.valueOf(value.getValue()));
+					}
 				}
 			}
 			ini.store();
@@ -73,6 +75,8 @@ public class ConfigFileManager {
 					ConfigData keyE = configsID.get(key);
 					if (keyE != null) {
 						keyE.setValue(section.get(key));
+					} else {
+						ARCLogger.log(Level.CONFIG, "Found incorrect config key: '" + key + "'", null);
 					}
 				} catch (IllegalArgumentException e) {
 					ARCLogger.log(Level.CONFIG, "Config with name " + key + " not exists", e);

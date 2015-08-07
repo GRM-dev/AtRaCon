@@ -32,8 +32,10 @@ public abstract class ConfigDB extends HashMap<String, ConfigData> {
 		}
 	}
 
-	public void updateValue(String name, String value) {
-		get(name).setValue(value);
+	public void updateValue(String key, String value) {
+		if (containsKey(key)) {
+			get(key).setValue(value);
+		}
 	}
 
 	public void updateValue(String name, double value) {

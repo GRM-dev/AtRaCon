@@ -12,6 +12,7 @@ public class RPiConfigId extends ConfigDB {
 		add(new ConfigData("HOST_PORT", "22345"));
 		add(new ConfigData("HOST_RMI_NAME", "dbHandler"));
 		add(new ConfigData("CONN_ATTEMPTS", 5));
+		add(new ConfigData("HOST_CONN_TIME_SPAN", 5000));
 	}
 
 }
