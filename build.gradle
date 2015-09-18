@@ -9,7 +9,6 @@ buildscript {
          classpath 'com.github.rholder:gradle-one-jar:1.0.4'
     }
 }
- 
 
 subprojects {
   apply plugin: 'java'
@@ -30,10 +29,6 @@ subprojects {
   }
 
   dependencies {
-    compile group: 'com.google.guava', name: 'guava', version: '18.0'
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
-    compile group: 'org.json', name: 'json', version: '20141113'
-    compile group: 'org.ini4j', name: 'ini4j', version: '0.5.4'
     testCompile 'junit:junit:4.12'
   }
 }

@@ -5,6 +5,7 @@ mainClassName="pl.grm.atracon.server.SMain"
 
 dependencies {
 	compile group: 'mysql',name: 'mysql-connector-java', version: '5.1.35'
+	compile group: 'org.hibernate', name: 'hibernate-core', version: '5.0.1.Final'
 }
 
 jar {
