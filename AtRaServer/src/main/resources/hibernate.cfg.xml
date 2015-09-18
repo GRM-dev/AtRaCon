@@ -12,8 +12,5 @@
    </property>
    <property name="hbm2ddl.auto">update</property>
 
-   <!-- List of XML mapping classes -->
-   <mapping class="pl.grm.atracon.server.devices.RaspPi"/>
-
 </session-factory>
 </hibernate-configuration>

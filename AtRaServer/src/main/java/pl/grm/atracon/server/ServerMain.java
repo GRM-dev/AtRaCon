@@ -79,9 +79,8 @@ public class ServerMain {
 			System.out.println("  -name: " + raspPi.getName());
 			System.out.println("  -address: " + raspPi.getAddress());
 			System.out.println("  -activated: " + raspPi.isActivated());
-			System.out.println("  -description: " + raspPi.getDesc() == null ? "none" : raspPi.getDesc());
-			System.out.println(
-					"  -last active: " + raspPi.getLastActive() == null ? "NN" : raspPi.getLastActive().getTime());
+			System.out.println("  -description: " + (raspPi.getDesc() == null ? "none" : raspPi.getDesc()));
+			System.out.println("  -last active: " + (raspPi.getLastActive() == null ? "NN" : raspPi.getLastActive()));
 		}
 	}
 

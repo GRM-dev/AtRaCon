@@ -4,7 +4,6 @@
 package pl.grm.atracon.server.db;
 
 import java.util.*;
-import java.util.Map.Entry;
 import java.util.logging.Level;
 
 import org.hibernate.*;
@@ -35,45 +34,46 @@ public class DBHandler {
 	public void initConnection() throws HibernateException {
 		if (factory == null || factory.isClosed()) {
 			String url = configDB.get(ConfigParams.DB_HOST.toString()).getValue();
+			String db = configDB.get(ConfigParams.DB_NAME.toString()).getValue();
 			String user = configDB.get(ConfigParams.DB_USERNAME.toString()).getValue();
 			String passwd = configDB.get(ConfigParams.DB_PASSWORD.toString()).getValue();
 
 			Configuration configuration = new Configuration().configure();
-			configuration.setProperty("hibernate.connection.url", url);
+			configuration.setProperty("hibernate.connection.url", url + "/" + db);
 			configuration.setProperty("hibernate.connection.username", user);
 			configuration.setProperty("hibernate.connection.password", passwd);
 			Properties properties = configuration.getProperties();
 			ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(properties).build();
-			Metadata metadata = new MetadataSources(serviceRegistry).buildMetadata();
+			MetadataSources metadataS = new MetadataSources(serviceRegistry);
+			metadataS.addAnnotatedClass(RaspPi.class);
+			Metadata metadata = metadataS.buildMetadata();
 			Collection<PersistentClass> list = metadata.getEntityBindings();
 			System.out.println("Entities amount: " + list.size());
 			for (PersistentClass c : list) {
 				System.out.println(c.getClassName());
-			}
-			Iterator<Entry<Object, Object>> it = properties.entrySet().iterator();
-			while (it.hasNext()) {
-				Entry<Object, Object> entry = it.next();
-				System.out.println("P: " + ((String) entry.getKey()) + " -- " + ((String) entry.getValue()));
 			}
 			factory = metadata.buildSessionFactory();
 		}
 	}
 
 	public void closeConnection() {
-		try {
-			if (factory != null && !factory.isClosed()) {
-				Session session;
+
+		if (factory != null) {
+			Session session;
+			try {
 				if ((session = factory.getCurrentSession()) != null && session.isConnected()) {
 					session.disconnect();
+					session.close();
 				}
-				factory.close();
 			}
+			catch (Exception e) {}
+			factory.close();
 		}
-		catch (Exception e) {}
+
 	}
 
 	public static void closeSession(Session session) {
-		if (session != null && session.isConnected()) {
+		if (session != null && (session.isConnected() || session.isOpen())) {
 			session.close();
 		}
 	}

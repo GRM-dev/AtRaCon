@@ -17,7 +17,7 @@ import javax.persistence.*;
 public class RaspPi implements Serializable {
 
 	@Id
-	@GeneratedValue(generator = "increment")
+	@GeneratedValue
 	private int id;
 	@Column(name = "name")
 	private String name;
