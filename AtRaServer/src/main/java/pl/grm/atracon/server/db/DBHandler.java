@@ -7,10 +7,9 @@ import java.util.*;
 import java.util.logging.Level;
 
 import org.hibernate.*;
-import org.hibernate.boot.*;
+import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.mapping.PersistentClass;
 import org.hibernate.service.ServiceRegistry;
 
 import pl.grm.atracon.lib.ARCLogger;
@@ -42,17 +41,13 @@ public class DBHandler {
 			configuration.setProperty("hibernate.connection.url", url + "/" + db);
 			configuration.setProperty("hibernate.connection.username", user);
 			configuration.setProperty("hibernate.connection.password", passwd);
+
 			Properties properties = configuration.getProperties();
 			ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(properties).build();
-			MetadataSources metadataS = new MetadataSources(serviceRegistry);
-			metadataS.addAnnotatedClass(RaspPi.class);
-			Metadata metadata = metadataS.buildMetadata();
-			Collection<PersistentClass> list = metadata.getEntityBindings();
-			System.out.println("Entities amount: " + list.size());
-			for (PersistentClass c : list) {
-				System.out.println(c.getClassName());
-			}
-			factory = metadata.buildSessionFactory();
+
+			MetadataSources metadata = new MetadataSources(serviceRegistry);
+			metadata.addAnnotatedClass(RaspPi.class);
+			factory = metadata.buildMetadata().buildSessionFactory();
 		}
 	}
 
@@ -78,17 +73,16 @@ public class DBHandler {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<RaspPi> getRaspPiDevices() {
-		ArrayList<RaspPi> devs = new ArrayList<>();
+		ArrayList<RaspPi> devs = null;
 		Session session = factory.openSession();
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
-			List devsL = session.createQuery("FROM RaspPi").list();
-			for (Iterator it = devsL.iterator(); it.hasNext();) {
-				RaspPi dev = (RaspPi) it.next();
-				devs.add(dev);
-			}
+			devs = (ArrayList<RaspPi>) session.createQuery("FROM RaspPi").list();
+			devs.get(1).setActivated(true);;
+			session.update(devs.get(1));
 			tx.commit();
 		}
 		catch (HibernateException e) {

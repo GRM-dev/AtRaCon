@@ -4,7 +4,7 @@
 package pl.grm.atracon.server.devices;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.sql.Timestamp;
 
 import javax.persistence.*;
 
@@ -19,20 +19,20 @@ public class RaspPi implements Serializable {
 	@Id
 	@GeneratedValue
 	private int id;
-	@Column(name = "name")
+	@Column(name = "name", unique = true, nullable = false)
 	private String name;
-	@Column(name = "address")
+	@Column(name = "address", nullable = false)
 	private String address;
 	@Column(name = "desc")
 	private String desc;
 	@Column(name = "last_active")
-	private Date lastActive;
+	private Timestamp lastActive;
 	@Column(name = "activated")
 	private boolean activated;
 
 	public RaspPi() {}
 
-	public RaspPi(String name, String address, String desc, Date lastActive, boolean activated) {
+	public RaspPi(String name, String address, String desc, Timestamp lastActive, boolean activated) {
 		this.name = name;
 		this.address = address;
 		this.desc = desc;
@@ -73,11 +73,11 @@ public class RaspPi implements Serializable {
 		this.desc = desc;
 	}
 
-	public Date getLastActive() {
+	public Timestamp getLastActive() {
 		return lastActive;
 	}
 
-	public void setLastActive(Date lastActive) {
+	public void setLastActive(Timestamp lastActive) {
 		this.lastActive = lastActive;
 	}
 
