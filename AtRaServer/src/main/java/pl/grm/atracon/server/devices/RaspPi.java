@@ -6,6 +6,7 @@ package pl.grm.atracon.server.devices;
 import java.io.Serializable;
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import javax.persistence.*;
 
@@ -31,6 +32,8 @@ public class RaspPi implements Serializable {
 	private Timestamp lastActive;
 	@Column(name = "f_activated", nullable = false)
 	private boolean activated;
+	@OneToMany(mappedBy = "raspPi", targetEntity = Atmega.class, fetch = FetchType.EAGER)
+	private Set<Atmega> atmDevices;
 
 	public RaspPi() {}
 
@@ -94,15 +97,20 @@ public class RaspPi implements Serializable {
 
 	}
 
+	public Set<Atmega> getAtmDevices() {
+		return atmDevices;
+	}
+
+	public void setAtmDevices(Set<Atmega> atmDevices) {
+		this.atmDevices = atmDevices;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("RaspPi [id=");
-		builder.append(id);
-		builder.append(", name=");
-		builder.append(name);
-		builder.append(", address=");
-		builder.append(address);
+		builder.append("RaspPi [id=" + id);
+		builder.append(", name='" + name + "'");
+		builder.append(", address=" + address);
 		builder.append(", desc=");
 		if (desc == null)
 			builder.append("NN");
@@ -111,8 +119,8 @@ public class RaspPi implements Serializable {
 		if (lastActive == null)
 			builder.append("Never");
 		else builder.append(new Date(lastActive.getTime()).toString());
-		builder.append(", activated=");
-		builder.append(activated);
+		builder.append(", activated=" + activated);
+		builder.append(", contain " + atmDevices.size() + " Atmega devices");
 		builder.append("]");
 		return builder.toString();
 	}

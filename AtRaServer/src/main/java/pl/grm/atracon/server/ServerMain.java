@@ -1,6 +1,6 @@
 package pl.grm.atracon.server;
 
-import java.util.List;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -71,14 +71,28 @@ public class ServerMain {
 			ARCLogger.error(e);
 			stop();
 		}
+
 		List<RaspPi> devs = dbHandler.getRaspPiDevices();
 		for (RaspPi raspPi : devs) {
 			ARCLogger.info(raspPi.toString());
 			ARCLogger.info("Atmega devices: ");
-			List<Atmega> atmL = dbHandler.getAtmegaDevices(raspPi.getId());
+			Set<Atmega> atmL = raspPi.getAtmDevices();// dbHandler.getAtmegaDevices(raspPi.getId());
 			for (Atmega atmega : atmL) {
 				ARCLogger.info(atmega.toString());
+				ARCLogger.info("Registry entries: ");
+				Map<Integer, Register> registry = atmega.getRegistry();
+				Iterator<Integer> it = registry.keySet().iterator();
+				while (it.hasNext()) {
+					Integer address = it.next();
+					Register register = registry.get(address);
+					ARCLogger.info(register.toString());
+				}
 			}
+		}
+
+		List<Register> regs = dbHandler.getRegistry();
+		for (Register registry : regs) {
+			ARCLogger.info(registry.toString());
 		}
 	}
 

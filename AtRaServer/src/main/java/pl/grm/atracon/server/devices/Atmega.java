@@ -4,6 +4,7 @@
 package pl.grm.atracon.server.devices;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import javax.persistence.*;
 
@@ -26,14 +27,18 @@ public class Atmega implements Serializable {
 	private String name;
 	@Column(name = "f_port", unique = true, nullable = false)
 	private int port;
+	@OneToMany(mappedBy = "atmega", targetEntity = Register.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@MapKey(name = "regAddress")
+	private Map<Integer, Register> registry;
 
 	public Atmega() {}
 
-	public Atmega(int id, RaspPi raspPi, String name, int port) {
+	public Atmega(int id, RaspPi raspPi, String name, int port, Map<Integer, Register> registry) {
 		this.id = id;
 		this.raspPi = raspPi;
 		this.name = name;
 		this.port = port;
+		this.registry = registry;
 	}
 
 	public int getId() {
@@ -68,17 +73,22 @@ public class Atmega implements Serializable {
 		this.port = port;
 	}
 
+	public Map<Integer, Register> getRegistry() {
+		return registry;
+	}
+
+	public void setRegistry(Map<Integer, Register> registry) {
+		this.registry = registry;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Atmega [id=");
-		builder.append(id);
-		builder.append(", name=");
-		builder.append(name);
-		builder.append(", port=");
-		builder.append(port);
-		builder.append(", belongs to=");
-		builder.append(raspPi.getName());
+		builder.append("Atmega [id=" + id);
+		builder.append(", name='" + name + "'");
+		builder.append(", port=" + port);
+		builder.append(", belongs to=" + raspPi.getName());
+		builder.append(", contain " + registry.size() + " registry addresses");
 		builder.append("]");
 		return builder.toString();
 	}

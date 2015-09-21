@@ -47,6 +47,7 @@ public class DBHandler {
 			MetadataSources metadata = new MetadataSources(serviceRegistry);
 			metadata.addAnnotatedClass(RaspPi.class);
 			metadata.addAnnotatedClass(Atmega.class);
+			metadata.addAnnotatedClass(Register.class);
 
 			factory = metadata.buildMetadata().buildSessionFactory();
 		}
@@ -104,6 +105,28 @@ public class DBHandler {
 		try {
 			tx = session.beginTransaction();
 			devs = session.createQuery("FROM Atmega atmega WHERE atmega.raspPi = " + raspPiId).list();
+			tx.commit();
+		}
+		catch (HibernateException e) {
+			if (tx != null) {
+				tx.rollback();
+			}
+			ARCLogger.error(e);
+		}
+		finally {
+			closeSession(session);
+		}
+		return devs;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Register> getRegistry() {
+		List<Register> devs = null;
+		Session session = factory.openSession();
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			devs = session.createQuery("FROM Register").list();
 			tx.commit();
 		}
 		catch (HibernateException e) {
