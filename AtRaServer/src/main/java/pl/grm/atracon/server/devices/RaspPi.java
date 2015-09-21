@@ -23,7 +23,7 @@ public class RaspPi implements Serializable {
 	private String name;
 	@Column(name = "address", nullable = false)
 	private String address;
-	@Column(name = "desc")
+	@Column(name = "description")
 	private String desc;
 	@Column(name = "last_active")
 	private Timestamp lastActive;
@@ -38,7 +38,6 @@ public class RaspPi implements Serializable {
 		this.desc = desc;
 		this.lastActive = lastActive;
 		this.activated = activated;
-
 	}
 
 	public int getId() {

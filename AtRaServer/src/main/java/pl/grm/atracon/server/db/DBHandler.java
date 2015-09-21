@@ -75,14 +75,15 @@ public class DBHandler {
 
 	@SuppressWarnings("unchecked")
 	public List<RaspPi> getRaspPiDevices() {
-		ArrayList<RaspPi> devs = null;
+		List<RaspPi> devs = null;
 		Session session = factory.openSession();
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
-			devs = (ArrayList<RaspPi>) session.createQuery("FROM RaspPi").list();
-			devs.get(1).setActivated(true);;
-			session.update(devs.get(1));
+			devs = session.createQuery("FROM RaspPi").list();
+			RaspPi pi = devs.get(2);
+			pi.setAddress("Krakow");
+			session.update(pi);
 			tx.commit();
 		}
 		catch (HibernateException e) {
