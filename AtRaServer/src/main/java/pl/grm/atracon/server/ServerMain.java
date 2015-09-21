@@ -1,7 +1,6 @@
 package pl.grm.atracon.server;
 
 import java.util.List;
-import java.util.logging.Level;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -10,21 +9,20 @@ import pl.grm.atracon.lib.ARCLogger;
 import pl.grm.atracon.lib.conf.*;
 import pl.grm.atracon.server.conf.ServerConfig;
 import pl.grm.atracon.server.db.DBHandler;
-import pl.grm.atracon.server.devices.RaspPi;
+import pl.grm.atracon.server.devices.*;
 
 public class ServerMain {
 
 	private static final String LOG_FILE_NAME = "ARC-Server.log";
+	private static final String ERR_LOG_FILE_NAME = "ARC-Error_Server.log";
 	private static final String CONFIG_FILE_NAME = "AtRaCon_Server.ini";
 	private ConfigDB confID;
 	private DBHandler dbHandler;
 
 	public static void main(String[] args) {
-		if (!ARCLogger.setupLogger(LOG_FILE_NAME)) {
-			System.err.println("Cannot create log handler");
-		}
+		ARCLogger.setLogger(ARCLogger.setupLogger(LOG_FILE_NAME));
+		ARCLogger.setErrorLogger(ARCLogger.setupLogger(ERR_LOG_FILE_NAME));
 		ARCLogger.info("Starting AtRaCon server ...");
-
 		ServerMain server = new ServerMain();
 		try {
 			server.initialize();
@@ -32,13 +30,13 @@ public class ServerMain {
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-			ARCLogger.log(Level.SEVERE, "Server error\n" + e.getMessage(), e);
+			ARCLogger.error("Server error\n" + e.getMessage(), e);
 		}
 		if (server != null) {
 			server.stop();
 		}
 		ARCLogger.info("Stopping AtRaCon server.");
-		ARCLogger.closeLogger();
+		ARCLogger.closeLoggers();
 	}
 
 	private ServerMain() {
@@ -70,18 +68,17 @@ public class ServerMain {
 		}
 		catch (HibernateException e) {
 			e.printStackTrace();
-			ARCLogger.log(Level.SEVERE, e.getMessage(), e);
+			ARCLogger.error(e);
 			stop();
 		}
 		List<RaspPi> devs = dbHandler.getRaspPiDevices();
 		for (RaspPi raspPi : devs) {
-			System.out.println("Dev " + raspPi.getId() + ": ");
-			System.out.println("  -name: " + raspPi.getName());
-			System.out.println("  -address: " + raspPi.getAddress());
-			System.out.println("  -activated: " + raspPi.isActivated());
-			System.out.println("  -description: " + (raspPi.getDesc() == null ? "none" : raspPi.getDesc()));
-			System.out.println(
-					"  -last active: " + (raspPi.getLastActive() == null ? "NN" : raspPi.getLastActive().getTime()));
+			ARCLogger.info(raspPi.toString());
+			ARCLogger.info("Atmega devices: ");
+			List<Atmega> atmL = dbHandler.getAtmegaDevices(raspPi.getId());
+			for (Atmega atmega : atmL) {
+				ARCLogger.info(atmega.toString());
+			}
 		}
 	}
 

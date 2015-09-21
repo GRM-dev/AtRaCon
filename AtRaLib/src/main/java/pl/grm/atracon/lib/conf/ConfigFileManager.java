@@ -2,7 +2,6 @@ package pl.grm.atracon.lib.conf;
 
 import java.io.*;
 import java.util.Iterator;
-import java.util.logging.Level;
 
 import org.ini4j.*;
 import org.ini4j.Profile.Section;
@@ -60,7 +59,7 @@ public class ConfigFileManager {
 			ini.store();
 		}
 		catch (IOException e) {
-			ARCLogger.log(Level.CONFIG, "cannot save config file", e);
+			ARCLogger.error("cannot save config file", e);
 			e.printStackTrace();
 		}
 	}
@@ -77,16 +76,16 @@ public class ConfigFileManager {
 					if (keyE != null) {
 						keyE.setValue(section.get(key));
 					} else {
-						ARCLogger.log(Level.CONFIG, "Found incorrect config key: '" + key + "'", null);
+						ARCLogger.warn("Found incorrect config key: '" + key + "'", null);
 					}
 				}
 				catch (IllegalArgumentException e) {
-					ARCLogger.log(Level.CONFIG, "Config with name " + key + " not exists", e);
+					ARCLogger.warn("Config with name " + key + " not exists", e);
 				}
 			}
 		}
 		catch (IOException e) {
-			ARCLogger.log(Level.CONFIG, "cannot load config file. Try to repair it or delete", e);
+			ARCLogger.warn("cannot load config file. Try to repair it or delete", e);
 			e.printStackTrace();
 		}
 		return configsID;

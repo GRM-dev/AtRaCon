@@ -4,7 +4,6 @@
 package pl.grm.atracon.server.db;
 
 import java.util.*;
-import java.util.logging.Level;
 
 import org.hibernate.*;
 import org.hibernate.boot.MetadataSources;
@@ -15,7 +14,7 @@ import org.hibernate.service.ServiceRegistry;
 import pl.grm.atracon.lib.ARCLogger;
 import pl.grm.atracon.lib.conf.ConfigDB;
 import pl.grm.atracon.server.conf.ConfigParams;
-import pl.grm.atracon.server.devices.RaspPi;
+import pl.grm.atracon.server.devices.*;
 
 /**
  * @author Levvy055
@@ -47,6 +46,8 @@ public class DBHandler {
 
 			MetadataSources metadata = new MetadataSources(serviceRegistry);
 			metadata.addAnnotatedClass(RaspPi.class);
+			metadata.addAnnotatedClass(Atmega.class);
+
 			factory = metadata.buildMetadata().buildSessionFactory();
 		}
 	}
@@ -81,16 +82,35 @@ public class DBHandler {
 		try {
 			tx = session.beginTransaction();
 			devs = session.createQuery("FROM RaspPi").list();
-			RaspPi pi = devs.get(2);
-			pi.setAddress("Krakow");
-			session.update(pi);
 			tx.commit();
 		}
 		catch (HibernateException e) {
 			if (tx != null) {
 				tx.rollback();
 			}
-			ARCLogger.log(Level.SEVERE, e.getLocalizedMessage(), e);
+			ARCLogger.error(e);
+		}
+		finally {
+			closeSession(session);
+		}
+		return devs;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Atmega> getAtmegaDevices(int raspPiId) {
+		List<Atmega> devs = null;
+		Session session = factory.openSession();
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			devs = session.createQuery("FROM Atmega atmega WHERE atmega.raspPi = " + raspPiId).list();
+			tx.commit();
+		}
+		catch (HibernateException e) {
+			if (tx != null) {
+				tx.rollback();
+			}
+			ARCLogger.error(e);
 		}
 		finally {
 			closeSession(session);

@@ -26,6 +26,6 @@ public class RaspPiMain {
 
 		ConfigFileManager.saveConfig("AtRaCon.ini", confID);
 		ARCLogger.info("Stopping AtRaCon RaspberryPi Server Extenion.");
-		ARCLogger.closeLogger();
+		ARCLogger.closeLoggers();
 	}
 }

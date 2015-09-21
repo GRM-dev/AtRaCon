@@ -4,7 +4,8 @@
 package pl.grm.atracon.server.devices;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.sql.*;
+import java.time.LocalDateTime;
 
 import javax.persistence.*;
 
@@ -16,18 +17,19 @@ import javax.persistence.*;
 @Table(name = "devices_pi")
 public class RaspPi implements Serializable {
 
+	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue
 	private int id;
-	@Column(name = "name", unique = true, nullable = false)
+	@Column(name = "f_name", unique = true, nullable = false)
 	private String name;
-	@Column(name = "address", nullable = false)
+	@Column(name = "f_address", nullable = false)
 	private String address;
-	@Column(name = "description")
+	@Column(name = "f_description")
 	private String desc;
-	@Column(name = "last_active")
+	@Column(name = "f_last_active")
 	private Timestamp lastActive;
-	@Column(name = "activated")
+	@Column(name = "f_activated", nullable = false)
 	private boolean activated;
 
 	public RaspPi() {}
@@ -85,6 +87,33 @@ public class RaspPi implements Serializable {
 	}
 
 	public void setActivated(boolean activated) {
+		if (activated == false && this.activated == true) {
+			this.setLastActive(Timestamp.valueOf(LocalDateTime.now()));
+		}
 		this.activated = activated;
+
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("RaspPi [id=");
+		builder.append(id);
+		builder.append(", name=");
+		builder.append(name);
+		builder.append(", address=");
+		builder.append(address);
+		builder.append(", desc=");
+		if (desc == null)
+			builder.append("NN");
+		else builder.append(desc);
+		builder.append(", lastActive=");
+		if (lastActive == null)
+			builder.append("Never");
+		else builder.append(new Date(lastActive.getTime()).toString());
+		builder.append(", activated=");
+		builder.append(activated);
+		builder.append("]");
+		return builder.toString();
 	}
 }
