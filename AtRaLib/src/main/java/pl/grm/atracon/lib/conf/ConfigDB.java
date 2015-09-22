@@ -19,7 +19,7 @@ public abstract class ConfigDB extends HashMap<String, ConfigData> {
 		prepared = true;
 	}
 
-	public boolean isReady() {
+	public boolean checkReady() {
 		if (!prepared) {
 			prepare();
 		}

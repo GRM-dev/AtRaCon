@@ -33,7 +33,7 @@ public class ConfigFileManager {
 				file.createNewFile();
 			}
 			Ini ini = new Wini(file);
-			if (!config.isReady()) { return; }
+			if (!config.checkReady()) { return; }
 			Section confSection = ini.get("conf");
 			if (confSection == null) {
 				ini.add("conf");

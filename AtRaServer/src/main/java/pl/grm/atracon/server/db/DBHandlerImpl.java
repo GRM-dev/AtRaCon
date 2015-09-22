@@ -11,8 +11,9 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 
-import pl.grm.atracon.lib.ARCLogger;
+import pl.grm.atracon.lib.*;
 import pl.grm.atracon.lib.conf.ConfigDB;
+import pl.grm.atracon.lib.rmi.DBHandler;
 import pl.grm.atracon.server.conf.ConfigParams;
 import pl.grm.atracon.server.devices.*;
 
@@ -20,12 +21,12 @@ import pl.grm.atracon.server.devices.*;
  * @author Levvy055
  *
  */
-public class DBHandler {
+public class DBHandlerImpl implements DBHandler {
 
 	private ConfigDB configDB;
 	private SessionFactory factory;
 
-	public DBHandler(ConfigDB configDB) {
+	public DBHandlerImpl(ConfigDB configDB) {
 		this.configDB = configDB;
 	}
 
@@ -120,7 +121,7 @@ public class DBHandler {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Register> getRegistry() {
+	public List<Register> getAllRegistry() {
 		List<Register> devs = null;
 		Session session = factory.openSession();
 		Transaction tx = null;

@@ -1,7 +1,7 @@
 group="pl.grm.atracon"
 description="Raspberry Pi connector - to AtRaCon project."
 def archieveFileName="AtRaCon-RP"
-mainClassName="pl.grm.atracon.rasp.RMain"
+mainClassName="pl.grm.atracon.rasp.RaspPiMain"
 
 dependencies {
 	compile 'com.pi4j:pi4j-core:1.0'
