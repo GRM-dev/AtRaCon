@@ -1,42 +1,20 @@
-group="pl.grm.atracon"
-description="Raspberry Pi connector - to AtRaCon project."
-def archieveFileName="AtRaCon-RP"
-mainClassName="pl.grm.atracon.rasp.RaspPiMain"
-
-apply plugin: 'maven-publish'
-import org.apache.tools.ant.taskdefs.condition.Os
+group="pl.grm.sjsonp"
+description="API for Socket exchangenging JSON Parser."
+def archieveFileName="sjsonp-api"
+mainClassName="pl.grm.sjsonp.api.ApiTest"
 
 dependencies {
-	compile 'com.pi4j:pi4j-core:1.0'
- }
+	compile group: 'com.google.guava', name: 'guava', version: '18.0'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
+    compile group: 'org.json', name: 'json', version: '20141113'
+    testCompile 'junit:junit:4.12'
+}
 
 jar {
 	manifest {
 		attributes 'Main-Class': mainClassName
 		attributes "Class-Path": configurations.compile.collect { it.getName() }.join(' ')
 	}
-}
-
-task execJar(type: OneJar) {
-    mainClass = mainClassName
-    archiveName = "AtRaConRaspPi-V"+version+".jar"
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-			from components.java
-			artifact execJar {
-                classifier "SNAPSHOT"
-            }
-        }
-    }
-	println configurations.runtime.allDependencies
-    repositories {
-        maven {
-            url "R:\\"
-        }
-    }
 }
 
 pmd {
@@ -61,4 +39,3 @@ check << {
     }
   }
 }
-

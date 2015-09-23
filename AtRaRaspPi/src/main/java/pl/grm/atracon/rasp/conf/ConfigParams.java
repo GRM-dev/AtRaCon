@@ -10,7 +10,9 @@ package pl.grm.atracon.rasp.conf;
 public enum ConfigParams {
 							RMI_NAME("serverHandler"),
 							RMI_PORT(22345),
-							RMI_HOST("192.168.1.11");
+							RMI_HOST("192.168.1.11"),
+							SYNCED("false"),
+							PORT_MAPPINGS_FILE("ports.ini");
 
 	private String sParam;
 	private int iParam;

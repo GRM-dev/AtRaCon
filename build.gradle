@@ -36,6 +36,7 @@ subprojects {
 project(':AtRaServer') {
     dependencies {
         compile project(':AtRaLib')
+		compile project(':SJSONP-API')
     }
 }
 
@@ -47,4 +48,8 @@ project(':AtRaRaspPi') {
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.7'
+}
+
+task listJars << {
+    configurations.compile.each { File file -> println file.name }
 }

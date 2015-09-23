@@ -11,9 +11,11 @@ import org.hibernate.HibernateException;
 import pl.grm.atracon.lib.ARCLogger;
 import pl.grm.atracon.lib.conf.*;
 import pl.grm.atracon.lib.rmi.IAtRaConRemoteController;
+import pl.grm.atracon.server.commands.*;
 import pl.grm.atracon.server.conf.*;
 import pl.grm.atracon.server.db.DBHandlerImpl;
 import pl.grm.atracon.server.rmi.AtRaConServer;
+import pl.grm.atracon.server.sockets.ClientConnector;
 
 public class ServerMain {
 
@@ -23,12 +25,19 @@ public class ServerMain {
 	private ConfigDB confID;
 	private DBHandlerImpl dbHandler;
 	private Thread rmiThread;
+	private Thread clientConnectionThread;
+	private static ServerMain server;
+	private ClientConnector clientConnector;
+	private CommandManager commandManager;
+	private ServerConsole console;
+	private volatile boolean running;
+	private Thread consoleThread;
 
 	public static void main(String[] args) {
 		ARCLogger.setLogger(ARCLogger.setupLogger(LOG_FILE_NAME));
 		ARCLogger.setErrorLogger(ARCLogger.setupLogger(ERR_LOG_FILE_NAME));
 		ARCLogger.info("Starting AtRaCon server ...");
-		ServerMain server = new ServerMain();
+		server = new ServerMain();
 		try {
 			server.initialize();
 			server.start();
@@ -37,11 +46,7 @@ public class ServerMain {
 			e.printStackTrace();
 			ARCLogger.error("Server error\n" + e.getMessage(), e);
 		}
-		if (server != null) {
-			server.stop();
-		}
-		ARCLogger.info("Stopping AtRaCon server.");
-		ARCLogger.closeLoggers();
+
 	}
 
 	private ServerMain() {
@@ -68,6 +73,7 @@ public class ServerMain {
 	 * Start server operations
 	 */
 	private void start() {
+		setRunning(true);
 		try {
 			dbHandler.initConnection();
 		}
@@ -78,6 +84,7 @@ public class ServerMain {
 		}
 		startRMIServer();
 		startSocketServer();
+		startConsole();
 	}
 
 	private void startRMIServer() {
@@ -108,20 +115,17 @@ public class ServerMain {
 				e.printStackTrace();
 			}
 			String rmiName = confID.get(ConfigParams.RMI_NAME.toString()).getValue();
-			rmiThread = new Thread(() -> {
-				try {
-					registry.rebind(rmiName, arcServer);
-				}
-				catch (AccessException e1) {
-					ARCLogger.error(e1);
-					e1.printStackTrace();
-				}
-				catch (RemoteException e2) {
-					ARCLogger.error(e2);
-					e2.printStackTrace();
-				}
-			});
-
+			try {
+				registry.bind(rmiName, arcServer);
+			}
+			catch (AccessException e1) {
+				ARCLogger.error(e1);
+				e1.printStackTrace();
+			}
+			catch (AlreadyBoundException e) {
+				ARCLogger.error(e);
+				e.printStackTrace();
+			}
 		}
 		catch (RemoteException e) {
 			ARCLogger.error(e);
@@ -130,16 +134,51 @@ public class ServerMain {
 	}
 
 	private void startSocketServer() {
-		// TODO Auto-generated method stub
+		clientConnectionThread = new Thread(() -> {
+			try {
+				clientConnector = new ClientConnector(confID);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				ARCLogger.error(e);
+			}
+		});
+		clientConnectionThread.setName("ARC socket thread");
+		clientConnectionThread.start();
+	}
 
+	/**
+	 * 
+	 */
+	private void startConsole() {
+		commandManager = new CommandManager(this);
+		console = new ServerConsole(this);
+		consoleThread = new Thread(console);
+		consoleThread.start();
 	}
 
 	/**
 	 * Stops server operations
 	 */
-	public void stop() {
-		dbHandler.closeConnection();
+	public static void stop() {
+		if (server != null && server.isRunning()) {
+			server.setRunning(false);
+			server.dbHandler.closeConnection();
+			ARCLogger.info("Stopping AtRaCon server.");
+		}
+		ARCLogger.closeLoggers();
+	}
 
+	public CommandManager getCM() {
+		return this.commandManager;
+	}
+
+	public boolean isRunning() {
+		return running;
+	}
+
+	private void setRunning(boolean runnning) {
+		this.running = runnning;
 	}
 
 }

@@ -14,7 +14,8 @@ public enum ConfigParams {
 							DB_PASSWORD,
 							DB_NAME("atracon"),
 							RMI_NAME("serverHandler"),
-							RMI_PORT(22345);
+							RMI_PORT(22345),
+							SOCKET_LISTENING_PORT(22520);
 
 	private String sParam;
 	private int iParam;

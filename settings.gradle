@@ -1,3 +1,4 @@
 include 'AtRaLib'
+include 'SJSONP-API'
 include 'AtRaServer'
 include 'AtRaRaspPi'
