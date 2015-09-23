@@ -1,9 +1,16 @@
-﻿<Application x:Class="AtRaCon_Client.App"
+﻿<Application
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:AtRaCon_Client"
+             xmlns:System="clr-namespace:System;assembly=mscorlib" x:Class="AtRaCon_Client.App"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="AtRaConMainDictionary.xaml"/>
+                <ResourceDictionary Source="Themes/WindowStyle.xaml"/>
+                <ResourceDictionary Source="Themes/Skins/ExpressionDark.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
