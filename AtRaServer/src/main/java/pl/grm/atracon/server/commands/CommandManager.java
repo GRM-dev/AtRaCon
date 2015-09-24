@@ -2,6 +2,8 @@ package pl.grm.atracon.server.commands;
 
 import java.util.*;
 
+import org.apache.commons.lang3.NotImplementedException;
+
 import pl.grm.atracon.lib.ARCLogger;
 import pl.grm.atracon.server.ServerMain;
 
@@ -9,7 +11,7 @@ public class CommandManager {
 
 	private ServerMain serverMain;
 	private ArrayList<String> lastCommands;
-	private HashMap<String, IBaseCommand> baseCommands;
+	private HashMap<Commands, IBaseCommand> baseCommands;
 
 	public CommandManager(ServerMain serverMain) {
 		this.serverMain = serverMain;
@@ -20,7 +22,7 @@ public class CommandManager {
 	/**
 	 * Initialize base commands
 	 */
-	public void add(String commandName, IBaseCommand command) {
+	public void add(Commands commandName, IBaseCommand command) {
 		baseCommands.put(commandName, command);
 	}
 
@@ -39,8 +41,9 @@ public class CommandManager {
 	 * @param connection
 	 *            connection on which commend should be executed
 	 * @return true if correctly executed
+	 * @throws Exception
 	 */
-	public boolean executeCommand(Commands command, String args, boolean offset) {
+	public boolean executeCommand(Commands command, String args, boolean offset) throws Exception {
 		if (!offset) {
 			args = Commands.getOffset(args);
 		}
@@ -59,19 +62,19 @@ public class CommandManager {
 	 * @param connection
 	 *            connection on which commend should be executed
 	 * @return true if correctly executed
+	 * @throws Exception
 	 */
-	public synchronized boolean executeCommand(Commands command, String args) {
-		try {
-			System.out.println(command);
-			CommandType cType = command.getType();
-			if (cType == CommandType.OFFLINE || cType == CommandType.ONLINE && serverMain.isRunning()) {
+	public synchronized boolean executeCommand(Commands command, String args) throws Exception {
+		System.out.println(command);
+		CommandType cType = command.getType();
+		if (cType == CommandType.OFFLINE || cType == CommandType.ONLINE && serverMain.isRunning()) {
+			if (baseCommands.containsKey(command)) {
 				ARCLogger.info("Executing " + command.toString() + " command.");
 				IBaseCommand cmm = baseCommands.get(command);
 				return cmm.execute(command, args, cType);
+			} else {
+				throw new NotImplementedException("There is no " + command.toString() + " implementation of command");
 			}
-		}
-		catch (Exception e) {
-			ARCLogger.error(e);
 		}
 		return false;
 	}

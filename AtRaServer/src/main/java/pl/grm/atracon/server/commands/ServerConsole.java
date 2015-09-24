@@ -2,6 +2,7 @@ package pl.grm.atracon.server.commands;
 
 import java.io.*;
 
+import pl.grm.atracon.lib.ARCLogger;
 import pl.grm.atracon.server.ServerMain;
 
 public class ServerConsole implements Runnable {
@@ -16,10 +17,21 @@ public class ServerConsole implements Runnable {
 	@Override
 	public void run() {
 		Thread.currentThread().setName("ARC Server Console Thread");
+		CommandManager cm = serverMain.getCM();
 		String command = "";
 		do {
 			command = readCommand();
-			serverMain.getCM().executeCommand(Commands.getCommand(command), command, false);
+			Commands cmd = Commands.getCommand(command);
+			if (cmd == Commands.NONE) {
+				ARCLogger.info("Bad command");
+			} else {
+				try {
+					cm.executeCommand(cmd, command, false);
+				}
+				catch (Exception e) {
+					ARCLogger.error(e);
+				}
+			}
 		}
 		while (!stop);
 		ServerMain.stop();

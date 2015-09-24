@@ -76,14 +76,14 @@ public class ServerMain {
 		setRunning(true);
 		try {
 			dbHandler.initConnection();
+			startRMIServer();
+			startSocketServer();
 		}
 		catch (HibernateException e) {
 			e.printStackTrace();
 			ARCLogger.error(e);
 			stop();
 		}
-		startRMIServer();
-		startSocketServer();
 		startConsole();
 	}
 

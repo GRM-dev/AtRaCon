@@ -1,34 +1,25 @@
 package pl.grm.atracon.server.commands;
 
-import pl.grm.sockjsonparser.server.commands.CommandType;
-
 public enum Commands {
-						NONE("", CommandType.NONE, false),
-						ERROR("error", CommandType.NONE, false),
-						SEND_ALL("sendall", CommandType.SERVER, true),
-						CLOSE("close", CommandType.SERVER, false),
-						CLOSECONN("closeConn", CommandType.BOTH, true),
-						CONNECTIONS("connections", CommandType.SERVER, true),
-						LIST("list", CommandType.BOTH, true),
-						STOP("stop", CommandType.SERVER, true),
-						START("start", CommandType.SERVER, false),
-						JSON("json", CommandType.BOTH, true),
-						MSG("msg", CommandType.SERVER, true),
-						SAY("say", CommandType.CLIENT, true);
+						NONE("", CommandType.OFFLINE),
+						CLOSE("close", CommandType.OFFLINE),
+						STOP("stop", CommandType.ONLINE),
+						CONNECTION("connection", CommandType.ONLINE),
+						START("start", CommandType.OFFLINE),
+						JSON("json", CommandType.OFFLINE),
+						STATUS("status", CommandType.OFFLINE);
 
 	private String command;
 	private CommandType type;
-	private boolean requireOnline;
 
-	private Commands(String name, CommandType type, boolean requireOnline) {
+	private Commands(String name, CommandType type) {
 		this.command = name;
 		this.type = type;
-		this.requireOnline = requireOnline;
 	}
 
 	public static Commands getCommand(String commS) {
 		for (Commands commT : Commands.values()) {
-			if (commT == NONE || commT == ERROR) {
+			if (commT == NONE) {
 				continue;
 			}
 			commS = commS.toLowerCase() + " ";
@@ -50,9 +41,5 @@ public enum Commands {
 
 	public CommandType getType() {
 		return type;
-	}
-
-	public boolean hasToBeOnline() {
-		return requireOnline;
 	}
 }

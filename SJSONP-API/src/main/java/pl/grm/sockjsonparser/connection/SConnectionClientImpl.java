@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.Socket;
 
 import pl.grm.sockjsonparser.api.ConnectionTask;
+import pl.grm.sockjsonparser.json.JsonSerializable;
 
 class SConnectionClientImpl extends Thread implements SConnection {
 
@@ -62,6 +63,29 @@ class SConnectionClientImpl extends Thread implements SConnection {
 			}
 			throw new IOException(e.getMessage());
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see pl.grm.sockjsonparser.connection.SConnection#sendObj(pl.grm.
+	 * sockjsonparser.json.JsonSerializable)
+	 */
+	@Override
+	public void sendObj(JsonSerializable obj) throws IOException {
+		// TODO Auto-generated method stub
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see pl.grm.sockjsonparser.connection.SConnection#getReceivedObject()
+	 */
+	@Override
+	public JsonSerializable getReceivedObject() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/*
