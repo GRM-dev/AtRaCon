@@ -2,10 +2,9 @@ package pl.grm.atracon.server.commands;
 
 import java.util.*;
 
-import org.apache.commons.lang3.NotImplementedException;
-
 import pl.grm.atracon.lib.ARCLogger;
 import pl.grm.atracon.server.ServerMain;
+import pl.grm.atracon.server.commands.impl.CommandExit;
 
 public class CommandManager {
 
@@ -17,6 +16,7 @@ public class CommandManager {
 		this.serverMain = serverMain;
 		lastCommands = new ArrayList<>();
 		baseCommands = new HashMap<>();
+		add(Commands.EXIT, new CommandExit());
 	}
 
 	/**
@@ -66,17 +66,13 @@ public class CommandManager {
 	 */
 	public synchronized boolean executeCommand(Commands command, String args) throws Exception {
 		System.out.println(command);
-		CommandType cType = command.getType();
-		if (cType == CommandType.OFFLINE || cType == CommandType.ONLINE && serverMain.isRunning()) {
-			if (baseCommands.containsKey(command)) {
-				ARCLogger.info("Executing " + command.toString() + " command.");
-				IBaseCommand cmm = baseCommands.get(command);
-				return cmm.execute(command, args, cType);
-			} else {
-				throw new NotImplementedException("There is no " + command.toString() + " implementation of command");
-			}
+		if (baseCommands.containsKey(command)) {
+			ARCLogger.info("Executing " + command.toString() + " command with params: " + args);
+			IBaseCommand cmm = baseCommands.get(command);
+			return cmm.execute(command, args, serverMain);
+		} else {
+			throw new CommandException("There is no " + command.toString() + " implementation of command");
 		}
-		return false;
 	}
 
 	public void addCommandToList(String input) {

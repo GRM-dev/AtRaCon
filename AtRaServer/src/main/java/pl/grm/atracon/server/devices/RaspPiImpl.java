@@ -10,13 +10,15 @@ import java.util.Set;
 
 import javax.persistence.*;
 
+import pl.grm.atracon.lib.devices.*;
+
 /**
  * @author Levvy055
  *
  */
 @Entity
 @Table(name = "devices_pi")
-public class RaspPi implements Serializable {
+public class RaspPiImpl implements Serializable, RaspPi {
 
 	private static final long serialVersionUID = 1L;
 	@Id
@@ -32,12 +34,12 @@ public class RaspPi implements Serializable {
 	private Timestamp lastActive;
 	@Column(name = "f_activated", nullable = false)
 	private boolean activated;
-	@OneToMany(mappedBy = "raspPi", targetEntity = Atmega.class, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "raspPi", targetEntity = AtmegaImpl.class, fetch = FetchType.EAGER)
 	private Set<Atmega> atmDevices;
 
-	public RaspPi() {}
+	public RaspPiImpl() {}
 
-	public RaspPi(String name, String address, String desc, Timestamp lastActive, boolean activated) {
+	public RaspPiImpl(String name, String address, String desc, Timestamp lastActive, boolean activated) {
 		this.name = name;
 		this.address = address;
 		this.desc = desc;
@@ -45,6 +47,12 @@ public class RaspPi implements Serializable {
 		this.activated = activated;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see pl.grm.atracon.server.devices.RaspPi#getId()
+	 */
+	@Override
 	public int getId() {
 		return id;
 	}
@@ -53,42 +61,103 @@ public class RaspPi implements Serializable {
 		this.id = id;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see pl.grm.atracon.server.devices.RaspPi#getName()
+	 */
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see pl.grm.atracon.server.devices.RaspPi#setName(java.lang.String)
+	 */
+	@Override
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see pl.grm.atracon.server.devices.RaspPi#getAddress()
+	 */
+	@Override
 	public String getAddress() {
 		return address;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see pl.grm.atracon.server.devices.RaspPi#setAddress(java.lang.String)
+	 */
+	@Override
 	public void setAddress(String address) {
 		this.address = address;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see pl.grm.atracon.server.devices.RaspPi#getDesc()
+	 */
+	@Override
 	public String getDesc() {
 		return desc;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see pl.grm.atracon.server.devices.RaspPi#setDesc(java.lang.String)
+	 */
+	@Override
 	public void setDesc(String desc) {
 		this.desc = desc;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see pl.grm.atracon.server.devices.RaspPi#getLastActive()
+	 */
+	@Override
 	public Timestamp getLastActive() {
 		return lastActive;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * pl.grm.atracon.server.devices.RaspPi#setLastActive(java.sql.Timestamp)
+	 */
+	@Override
 	public void setLastActive(Timestamp lastActive) {
 		this.lastActive = lastActive;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see pl.grm.atracon.server.devices.RaspPi#isActivated()
+	 */
+	@Override
 	public boolean isActivated() {
 		return activated;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see pl.grm.atracon.server.devices.RaspPi#setActivated(boolean)
+	 */
+	@Override
 	public void setActivated(boolean activated) {
 		if (activated == false && this.activated == true) {
 			this.setLastActive(Timestamp.valueOf(LocalDateTime.now()));
@@ -97,10 +166,22 @@ public class RaspPi implements Serializable {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see pl.grm.atracon.server.devices.RaspPi#getAtmDevices()
+	 */
+	@Override
 	public Set<Atmega> getAtmDevices() {
 		return atmDevices;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see pl.grm.atracon.server.devices.RaspPi#setAtmDevices(java.util.Set)
+	 */
+	@Override
 	public void setAtmDevices(Set<Atmega> atmDevices) {
 		this.atmDevices = atmDevices;
 	}

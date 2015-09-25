@@ -19,11 +19,15 @@ public class ClientConnector {
 
 	private int port;
 	private SConnection connection;
+	private ConnectionTask task;
 
 	public ClientConnector(ConfigDB conf) throws NullPointerException, ClassNotFoundException {
 		ConfigData cD = conf.get(ConfigParams.SOCKET_LISTENING_PORT.toString());
 		port = Integer.parseInt(cD.getValue());
-		ConnectionTask task = new ServerTask();
+		task = new ServerTask();
+	}
+
+	public void waitForConnection() throws ClassNotFoundException {
 		try {
 			connection = ConnectionFactory.establishConnection(null, port, task, ConnectioSide.SERVER);
 		}
@@ -31,7 +35,21 @@ public class ClientConnector {
 			e.printStackTrace();
 			ARCLogger.error(e);
 		}
-
 	}
 
+	public void interruptConnection() {
+		ConnectionFactory.interruptConnecting();
+	}
+
+	public boolean isConnected() {
+		if (connection != null) { return connection.isConnected(); }
+		return false;
+	}
+
+	/**
+	 * @return
+	 */
+	public SConnection getConnection() {
+		return connection;
+	}
 }

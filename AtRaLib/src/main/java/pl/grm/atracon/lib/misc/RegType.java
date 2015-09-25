@@ -1,7 +1,7 @@
 /**
  * 
  */
-package pl.grm.atracon.server.devices;
+package pl.grm.atracon.lib.misc;
 
 /**
  * @author Levvy055

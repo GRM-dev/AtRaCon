@@ -6,6 +6,7 @@ package pl.grm.atracon.server.rmi;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
+import pl.grm.atracon.lib.devices.RaspPi;
 import pl.grm.atracon.lib.rmi.IAtRaConRemoteController;
 
 /**
@@ -20,7 +21,17 @@ public class AtRaConServer extends UnicastRemoteObject implements IAtRaConRemote
 	 * @throws RemoteException
 	 */
 	public AtRaConServer() throws RemoteException {
-		super();
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see pl.grm.atracon.lib.rmi.IAtRaConRemoteController#getPi()
+	 */
+	@Override
+	public RaspPi getPi() {
+		return null;
 	}
 
 }

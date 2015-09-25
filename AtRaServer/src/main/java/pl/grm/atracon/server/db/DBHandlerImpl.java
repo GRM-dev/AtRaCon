@@ -46,9 +46,9 @@ public class DBHandlerImpl implements DBHandler {
 			ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(properties).build();
 
 			MetadataSources metadata = new MetadataSources(serviceRegistry);
-			metadata.addAnnotatedClass(RaspPi.class);
-			metadata.addAnnotatedClass(Atmega.class);
-			metadata.addAnnotatedClass(Register.class);
+			metadata.addAnnotatedClass(RaspPiImpl.class);
+			metadata.addAnnotatedClass(AtmegaImpl.class);
+			metadata.addAnnotatedClass(RegisterImpl.class);
 
 			factory = metadata.buildMetadata().buildSessionFactory();
 		}
@@ -77,8 +77,8 @@ public class DBHandlerImpl implements DBHandler {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<RaspPi> getRaspPiDevices() {
-		List<RaspPi> devs = null;
+	public List<RaspPiImpl> getRaspPiDevices() {
+		List<RaspPiImpl> devs = null;
 		Session session = factory.openSession();
 		Transaction tx = null;
 		try {
@@ -99,8 +99,8 @@ public class DBHandlerImpl implements DBHandler {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Atmega> getAtmegaDevices(int raspPiId) {
-		List<Atmega> devs = null;
+	public List<AtmegaImpl> getAtmegaDevices(int raspPiId) {
+		List<AtmegaImpl> devs = null;
 		Session session = factory.openSession();
 		Transaction tx = null;
 		try {
@@ -121,8 +121,8 @@ public class DBHandlerImpl implements DBHandler {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Register> getAllRegistry() {
-		List<Register> devs = null;
+	public List<RegisterImpl> getAllRegistry() {
+		List<RegisterImpl> devs = null;
 		Session session = factory.openSession();
 		Transaction tx = null;
 		try {

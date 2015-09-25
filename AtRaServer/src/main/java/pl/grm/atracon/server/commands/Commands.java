@@ -1,23 +1,24 @@
 package pl.grm.atracon.server.commands;
 
 public enum Commands {
-						NONE("", CommandType.OFFLINE),
-						CLOSE("close", CommandType.OFFLINE),
-						STOP("stop", CommandType.ONLINE),
-						CONNECTION("connection", CommandType.ONLINE),
-						START("start", CommandType.OFFLINE),
-						JSON("json", CommandType.OFFLINE),
-						STATUS("status", CommandType.OFFLINE);
+						NONE("", CommandType.CLIENT_OFFLINE),
+						EXIT("exit"),
+						STOP("stop", CommandType.ONE_ONLINE),
+						DISCONNECT("disconnect", CommandType.ONE_ONLINE),
+						START("start", CommandType.ALL_OFFLINE),
+						SHOW("show"),
+						STATUS("status");
 
 	private String command;
-	private CommandType type;
+	private CommandType[] types;
 
-	private Commands(String name, CommandType type) {
+	private Commands(String name, CommandType... types) {
 		this.command = name;
-		this.type = type;
+		this.types = types;
 	}
 
 	public static Commands getCommand(String commS) {
+		if (commS == null || commS == "") { return NONE; }
 		for (Commands commT : Commands.values()) {
 			if (commT == NONE) {
 				continue;
@@ -39,7 +40,17 @@ public enum Commands {
 		return "!" + command;
 	}
 
-	public CommandType getType() {
-		return type;
+	public CommandType[] getTypes() {
+		return types;
+	}
+
+	public int getTypesHash() {
+		int hash = 0;
+		if (types != null) {
+			for (CommandType commandType : types) {
+				hash += commandType.getId();
+			}
+		}
+		return hash;
 	}
 }

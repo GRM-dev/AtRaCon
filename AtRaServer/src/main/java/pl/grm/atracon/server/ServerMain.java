@@ -1,9 +1,12 @@
 package pl.grm.atracon.server;
 
+import java.io.IOException;
 import java.net.*;
 import java.net.UnknownHostException;
 import java.rmi.*;
 import java.rmi.registry.*;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.concurrent.*;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -16,6 +19,7 @@ import pl.grm.atracon.server.conf.*;
 import pl.grm.atracon.server.db.DBHandlerImpl;
 import pl.grm.atracon.server.rmi.AtRaConServer;
 import pl.grm.atracon.server.sockets.ClientConnector;
+import pl.grm.sockjsonparser.connection.SConnection;
 
 public class ServerMain {
 
@@ -24,14 +28,15 @@ public class ServerMain {
 	private static final String CONFIG_FILE_NAME = "AtRaCon_Server.ini";
 	private ConfigDB confID;
 	private DBHandlerImpl dbHandler;
-	private Thread rmiThread;
-	private Thread clientConnectionThread;
+	private ExecutorService executorClientsService;
+	private ExecutorService executorPiService;
+	private ExecutorService executorConsoleService;
 	private static ServerMain server;
 	private ClientConnector clientConnector;
 	private CommandManager commandManager;
 	private ServerConsole console;
 	private volatile boolean running;
-	private Thread consoleThread;
+	private IAtRaConRemoteController arcServer;
 
 	public static void main(String[] args) {
 		ARCLogger.setLogger(ARCLogger.setupLogger(LOG_FILE_NAME));
@@ -67,6 +72,9 @@ public class ServerMain {
 		Logger logger = Logger.getLogger(ServerMain.class);
 		logger.info(confID.values());
 		dbHandler = new DBHandlerImpl(confID);
+		executorClientsService = Executors.newFixedThreadPool(2);
+		// executorPiService = Executors.newFixedThreadPool(2);
+		executorConsoleService = Executors.newSingleThreadExecutor();
 	}
 
 	/**
@@ -82,15 +90,14 @@ public class ServerMain {
 		catch (HibernateException e) {
 			e.printStackTrace();
 			ARCLogger.error(e);
-			stop();
+			exit();
 		}
 		startConsole();
 	}
 
 	private void startRMIServer() {
 		try {
-			IAtRaConRemoteController arcServer = new AtRaConServer();
-
+			arcServer = new AtRaConServer();
 			ConfigData portConf = confID.get(ConfigParams.RMI_PORT.toString());
 			int port = ConfigParams.RMI_PORT.getIParam();
 			try {
@@ -134,39 +141,83 @@ public class ServerMain {
 	}
 
 	private void startSocketServer() {
-		clientConnectionThread = new Thread(() -> {
+		executorClientsService.execute(() -> {
 			try {
 				clientConnector = new ClientConnector(confID);
+				clientConnector.waitForConnection();
 			}
 			catch (Exception e) {
 				e.printStackTrace();
 				ARCLogger.error(e);
 			}
 		});
-		clientConnectionThread.setName("ARC socket thread");
-		clientConnectionThread.start();
 	}
 
 	/**
-	 * 
+	 * Starts console thread
 	 */
 	private void startConsole() {
 		commandManager = new CommandManager(this);
 		console = new ServerConsole(this);
-		consoleThread = new Thread(console);
-		consoleThread.start();
+		executorConsoleService.execute(console);
 	}
 
 	/**
 	 * Stops server operations
 	 */
-	public static void stop() {
+	public static void exit() {
 		if (server != null && server.isRunning()) {
-			server.setRunning(false);
-			server.dbHandler.closeConnection();
-			ARCLogger.info("Stopping AtRaCon server.");
+			server.stop();
+			server.console.setStop(true);
+			server.executorConsoleService.shutdownNow();
+			try {
+				server.executorConsoleService.awaitTermination(2000, TimeUnit.MILLISECONDS);
+			}
+			catch (InterruptedException e) {}
+			ARCLogger.closeLoggers();
 		}
-		ARCLogger.closeLoggers();
+	}
+
+	public void stop() {
+		setRunning(false);
+		int port = Integer.parseInt(server.confID.get(ConfigParams.RMI_PORT.toString()).getValue());
+		try {
+			Registry registry = LocateRegistry.getRegistry(port);
+			registry.unbind(server.confID.get(ConfigParams.RMI_NAME.toString()).getValue());
+			UnicastRemoteObject.unexportObject(server.arcServer, true);
+		}
+		catch (RemoteException e1) {
+			e1.printStackTrace();
+		}
+		catch (NotBoundException e) {
+			e.printStackTrace();
+		}
+		ARCLogger.info("Stopping AtRaCon server.");
+		if (getClient() != null) {
+			getClient().close();
+			try {
+				getClient().getSocket().close();
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		clientConnector.interruptConnection();
+		try {
+			Thread.sleep(300l);
+			executorClientsService.shutdown();
+			Thread.sleep(500l);
+		}
+		catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		executorClientsService.shutdownNow();
+		dbHandler.closeConnection();
+	}
+
+	public SConnection getClient() {
+		if (clientConnector == null) return null;
+		return clientConnector.getConnection();
 	}
 
 	public CommandManager getCM() {

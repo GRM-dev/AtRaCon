@@ -9,9 +9,11 @@ public class ServerConsole implements Runnable {
 
 	private ServerMain serverMain;
 	private boolean stop;
+	private BufferedReader br;
 
 	public ServerConsole(ServerMain serverMain) {
 		this.serverMain = serverMain;
+		br = new BufferedReader(new InputStreamReader(System.in));
 	}
 
 	@Override
@@ -19,27 +21,36 @@ public class ServerConsole implements Runnable {
 		Thread.currentThread().setName("ARC Server Console Thread");
 		CommandManager cm = serverMain.getCM();
 		String command = "";
+		Commands cmd = null;
+		boolean executed = false;
 		do {
-			command = readCommand();
-			Commands cmd = Commands.getCommand(command);
+			if (cmd == Commands.EXIT && executed) {
+				synchronized (cmd) {
+					try {
+						cmd.wait();
+					}
+					catch (InterruptedException e) {}
+				}
+			} else {
+				command = readCommand();
+			}
+			cmd = Commands.getCommand(command);
 			if (cmd == Commands.NONE) {
 				ARCLogger.info("Bad command");
 			} else {
 				try {
-					cm.executeCommand(cmd, command, false);
+					executed = cm.executeCommand(cmd, command, false);
 				}
 				catch (Exception e) {
 					ARCLogger.error(e);
 				}
 			}
 		}
-		while (!stop);
-		ServerMain.stop();
+		while (!isStop());
 	}
 
 	public String readCommand() {
 		String command = "";
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		try {
 			command = br.readLine();
 		}
@@ -47,5 +58,13 @@ public class ServerConsole implements Runnable {
 			e.printStackTrace();
 		}
 		return command;
+	}
+
+	public boolean isStop() {
+		return stop;
+	}
+
+	public void setStop(boolean stop) {
+		this.stop = stop;
 	}
 }

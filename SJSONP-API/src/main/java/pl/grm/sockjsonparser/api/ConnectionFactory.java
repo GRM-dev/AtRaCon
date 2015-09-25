@@ -15,25 +15,50 @@ import pl.grm.sockjsonparser.json.JsonConverter;
  */
 public class ConnectionFactory {
 
+	private static Socket socket;
+	private static ServerSocket sSocket;
+	private static boolean closing;
+
 	private ConnectionFactory() {}
 
 	public static SConnection establishConnection(String host, int port, ConnectionTask task, ConnectioSide side)
 			throws IOException, NullPointerException, ClassNotFoundException {
 		SConnection con = null;
-		Socket socket = null;
+		socket = null;
+		closing = false;
 		JsonConverter.init(task.getClass());
 		switch (side) {
 			case SERVER :
-				ServerSocket sSocket = new ServerSocket(port);
-				socket = sSocket.accept();
-
+				sSocket = new ServerSocket(port);
+				try {
+					socket = sSocket.accept();
+				}
+				catch (SocketException e) {
+					if (!closing) { throw e; }
+				}
 				break;
 			case CLIENT :
 				socket = new Socket(host, port);
 				break;
 		}
+		if (closing) { return null; }
 		con = ConnectionHandler.getConnection(task, socket, side);
 		return con;
+	}
+
+	public static void interruptConnecting() {
+		closing = true;
+		try {
+			if (socket != null) {
+				socket.close();
+			}
+			if (sSocket != null) {
+				sSocket.close();
+			}
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
