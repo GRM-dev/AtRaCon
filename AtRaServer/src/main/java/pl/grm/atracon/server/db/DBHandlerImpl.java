@@ -11,7 +11,8 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 
-import pl.grm.atracon.lib.ARCLogger;
+import com.github.fluent.hibernate.*;
+
 import pl.grm.atracon.lib.conf.ConfigDB;
 import pl.grm.atracon.lib.devices.*;
 import pl.grm.atracon.lib.rmi.DBHandler;
@@ -52,11 +53,17 @@ public class DBHandlerImpl implements DBHandler {
 			metadata.addAnnotatedClass(RegisterImpl.class);
 
 			factory = metadata.buildMetadata().buildSessionFactory();
+
+			try {
+				HibernateSessionFactory.Builder.configureFromExistingSessionFactory(factory);
+			}
+			catch (Throwable th) {
+				th.printStackTrace();
+			}
 		}
 	}
 
 	public void closeConnection() {
-
 		if (factory != null) {
 			Session session;
 			try {
@@ -64,11 +71,13 @@ public class DBHandlerImpl implements DBHandler {
 					session.disconnect();
 					session.close();
 				}
+
 			}
 			catch (Exception e) {}
-			factory.close();
+			finally {
+				HibernateSessionFactory.closeSessionFactory();
+			}
 		}
-
 	}
 
 	public static void closeSession(Session session) {
@@ -78,26 +87,8 @@ public class DBHandlerImpl implements DBHandler {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public List<RaspPi> getRaspPiDevices() {
-		List<RaspPi> devs = null;
-		Session session = factory.openSession();
-		Transaction tx = null;
-		try {
-			tx = session.beginTransaction();
-			devs = session.createQuery("FROM RaspPiImpl").list();
-			tx.commit();
-		}
-		catch (HibernateException e) {
-			if (tx != null) {
-				tx.rollback();
-			}
-			ARCLogger.error(e);
-		}
-		finally {
-			closeSession(session);
-		}
-		return devs;
+		return H.<RaspPi> request(RaspPiImpl.class).list();
 	}
 
 	/*
@@ -106,25 +97,8 @@ public class DBHandlerImpl implements DBHandler {
 	 * @see pl.grm.atracon.lib.rmi.DBHandler#getRaspPiDevice(int)
 	 */
 	@Override
-	public RaspPi getRaspPiDevice(int ID) {
-		RaspPi dev = null;
-		Session session = factory.openSession();
-		Transaction tx = null;
-		try {
-			tx = session.beginTransaction();
-			dev = (RaspPi) session.createQuery("FROM RaspPiImpl pi WHERE pi.id=" + ID).uniqueResult();
-			tx.commit();
-		}
-		catch (HibernateException e) {
-			if (tx != null) {
-				tx.rollback();
-			}
-			ARCLogger.error(e);
-		}
-		finally {
-			closeSession(session);
-		}
-		return dev;
+	public RaspPi getRaspPiDevice(int id) {
+		return H.<RaspPiImpl> getById(RaspPiImpl.class, id);
 	}
 
 	/*
@@ -132,50 +106,14 @@ public class DBHandlerImpl implements DBHandler {
 	 * 
 	 * @see pl.grm.atracon.lib.rmi.DBHandler#getAtmegaDevices()
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<Atmega> getAtmegaDevices() {
-		List<Atmega> devs = null;
-		Session session = factory.openSession();
-		Transaction tx = null;
-		try {
-			tx = session.beginTransaction();
-			devs = session.createQuery("FROM AtmegaImpl").list();
-			tx.commit();
-		}
-		catch (HibernateException e) {
-			if (tx != null) {
-				tx.rollback();
-			}
-			ARCLogger.error(e);
-		}
-		finally {
-			closeSession(session);
-		}
-		return devs;
+		return H.<Atmega> request(AtmegaImpl.class).list();
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public List<Atmega> getAtmegaDevices(int raspPiId) {
-		List<Atmega> devs = null;
-		Session session = factory.openSession();
-		Transaction tx = null;
-		try {
-			tx = session.beginTransaction();
-			devs = session.createQuery("FROM AtmegaImpl atmega WHERE atmega.raspPi = " + raspPiId).list();
-			tx.commit();
-		}
-		catch (HibernateException e) {
-			if (tx != null) {
-				tx.rollback();
-			}
-			ARCLogger.error(e);
-		}
-		finally {
-			closeSession(session);
-		}
-		return devs;
+		return H.<Atmega> request(AtmegaImpl.class).eq("raspPi.id", raspPiId).list();
 	}
 
 	/*
@@ -185,25 +123,7 @@ public class DBHandlerImpl implements DBHandler {
 	 */
 	@Override
 	public Atmega getAtmegaDevice(int raspPiId, int atmegaPort) {
-		Atmega dev = null;
-		Session session = factory.openSession();
-		Transaction tx = null;
-		try {
-			tx = session.beginTransaction();
-			String query = "FROM AtmegaImpl atm WHERE atm.raspPi = " + raspPiId + " AND atm.id = " + atmegaPort;
-			dev = (Atmega) session.createQuery(query).uniqueResult();
-			tx.commit();
-		}
-		catch (HibernateException e) {
-			if (tx != null) {
-				tx.rollback();
-			}
-			ARCLogger.error(e);
-		}
-		finally {
-			closeSession(session);
-		}
-		return dev;
+		return H.<Atmega> request(AtmegaImpl.class).eq("raspPi.id", raspPiId).eq("port", atmegaPort).first();
 	}
 
 	/*
@@ -213,48 +133,12 @@ public class DBHandlerImpl implements DBHandler {
 	 */
 	@Override
 	public Atmega getAtmegaDevice(int atmegaId) {
-		Atmega dev = null;
-		Session session = factory.openSession();
-		Transaction tx = null;
-		try {
-			tx = session.beginTransaction();
-			String query = "FROM AtmegaImpl atmega WHERE atmega.id = " + atmegaId;
-			dev = (Atmega) session.createQuery(query).uniqueResult();
-			tx.commit();
-		}
-		catch (HibernateException e) {
-			if (tx != null) {
-				tx.rollback();
-			}
-			ARCLogger.error(e);
-		}
-		finally {
-			closeSession(session);
-		}
-		return dev;
+		return H.<AtmegaImpl> getById(AtmegaImpl.class, atmegaId);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public List<Register> getAllRegistry() {
-		List<Register> devs = null;
-		Session session = factory.openSession();
-		Transaction tx = null;
-		try {
-			tx = session.beginTransaction();
-			devs = session.createQuery("FROM RegisterImpl").list();
-			tx.commit();
-		}
-		catch (HibernateException e) {
-			if (tx != null) {
-				tx.rollback();
-			}
-			ARCLogger.error(e);
-		}
-		finally {
-			closeSession(session);
-		}
-		return devs;
+		return H.<Register> request(RegisterImpl.class).list();
 	}
 
 	/*
@@ -264,23 +148,6 @@ public class DBHandlerImpl implements DBHandler {
 	 */
 	@Override
 	public Register getRegister(int regId) {
-		Register dev = null;
-		Session session = factory.openSession();
-		Transaction tx = null;
-		try {
-			tx = session.beginTransaction();
-			dev = (Register) session.createQuery("FROM RegisterImpl reg WHERE reg.id = " + regId).uniqueResult();
-			tx.commit();
-		}
-		catch (HibernateException e) {
-			if (tx != null) {
-				tx.rollback();
-			}
-			ARCLogger.error(e);
-		}
-		finally {
-			closeSession(session);
-		}
-		return dev;
+		return H.<RegisterImpl> getById(RegisterImpl.class, regId);
 	}
 }
