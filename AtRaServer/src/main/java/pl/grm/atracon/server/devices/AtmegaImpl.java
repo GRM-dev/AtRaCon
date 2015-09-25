@@ -3,12 +3,14 @@
  */
 package pl.grm.atracon.server.devices;
 
-import java.io.Serializable;
 import java.util.Map;
 
 import javax.persistence.*;
 
+import org.json.JSONObject;
+
 import pl.grm.atracon.lib.devices.*;
+import pl.grm.sockjsonparser.json.JsonSerializable;
 
 /**
  * @author Levvy055
@@ -16,7 +18,7 @@ import pl.grm.atracon.lib.devices.*;
  */
 @Entity
 @Table(name = "devices_atm")
-public class AtmegaImpl implements Serializable, Atmega {
+public class AtmegaImpl implements JsonSerializable, Atmega {
 
 	private static final long serialVersionUID = 1L;
 	@Id
@@ -149,5 +151,27 @@ public class AtmegaImpl implements Serializable, Atmega {
 		builder.append(", contain " + registry.size() + " registry addresses");
 		builder.append("]");
 		return builder.toString();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see pl.grm.sockjsonparser.json.JsonSerializable#getAsJsonObject()
+	 */
+	@Override
+	public JSONObject getAsJsonObject() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see pl.grm.sockjsonparser.json.JsonSerializable#toJSONString()
+	 */
+	@Override
+	public String toJSONString() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

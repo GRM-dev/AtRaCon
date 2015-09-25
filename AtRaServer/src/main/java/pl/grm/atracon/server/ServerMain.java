@@ -145,6 +145,9 @@ public class ServerMain {
 			try {
 				clientConnector = new ClientConnector(confID);
 				clientConnector.waitForConnection();
+				if (clientConnector.isConnected()) {
+					clientConnector.powerListener();
+				}
 			}
 			catch (Exception e) {
 				e.printStackTrace();

@@ -18,6 +18,7 @@ public class CommandManager {
 		baseCommands = new HashMap<>();
 		add(Commands.EXIT, new CommandExit());
 		add(Commands.SHOW, new CommandShow());
+		add(Commands.STATUS, new CommandStatus());
 	}
 
 	/**

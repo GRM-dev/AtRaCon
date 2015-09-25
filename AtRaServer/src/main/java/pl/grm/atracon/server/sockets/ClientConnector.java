@@ -10,6 +10,7 @@ import pl.grm.atracon.lib.conf.*;
 import pl.grm.atracon.server.conf.ConfigParams;
 import pl.grm.sockjsonparser.api.*;
 import pl.grm.sockjsonparser.connection.*;
+import pl.grm.sockjsonparser.json.JsonSerializable;
 
 /**
  * @author Levvy055
@@ -34,6 +35,16 @@ public class ClientConnector {
 		catch (IOException e) {
 			e.printStackTrace();
 			ARCLogger.error(e);
+		}
+	}
+
+	/**
+	 * 
+	 */
+	public void powerListener() {
+		while (isConnected()) {
+			JsonSerializable object = connection.getReceivedObject();
+			System.out.println(object.toJSONString());
 		}
 	}
 

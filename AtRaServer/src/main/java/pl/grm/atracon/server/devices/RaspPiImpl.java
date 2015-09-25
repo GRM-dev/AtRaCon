@@ -3,14 +3,16 @@
  */
 package pl.grm.atracon.server.devices;
 
-import java.io.Serializable;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.Set;
 
 import javax.persistence.*;
 
+import org.json.JSONObject;
+
 import pl.grm.atracon.lib.devices.*;
+import pl.grm.sockjsonparser.json.JsonSerializable;
 
 /**
  * @author Levvy055
@@ -18,7 +20,7 @@ import pl.grm.atracon.lib.devices.*;
  */
 @Entity
 @Table(name = "devices_pi")
-public class RaspPiImpl implements Serializable, RaspPi {
+public class RaspPiImpl implements JsonSerializable, RaspPi {
 
 	private static final long serialVersionUID = 1L;
 	@Id
@@ -204,5 +206,27 @@ public class RaspPiImpl implements Serializable, RaspPi {
 		builder.append(", contain " + atmDevices.size() + " Atmega devices");
 		builder.append("]");
 		return builder.toString();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see pl.grm.sockjsonparser.json.JsonSerializable#getAsJsonObject()
+	 */
+	@Override
+	public JSONObject getAsJsonObject() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see pl.grm.sockjsonparser.json.JsonSerializable#toJSONString()
+	 */
+	@Override
+	public String toJSONString() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
