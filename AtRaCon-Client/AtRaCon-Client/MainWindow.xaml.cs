@@ -23,24 +23,24 @@ namespace AtRaCon_Client
     public partial class MainWindow : Window
     {
         private static MainWindow _instance;
-        private LoginPage _loginPage;
-        private MainPage _mainPage;
+        
         public MainWindow()
         {
             _instance = this;
             InitializeComponent();
-            _loginPage = new LoginPage();
-            _mainPage = new MainPage();
+            ArcPageHandler.AddPage(new LoginPage());
+            ArcPageHandler.AddPage(new MainPage());
             var client = new AtRaConClient();
-            MainFrame.Navigate(_loginPage);
+            MainFrame.Navigate(ArcPageHandler.GetPage("LoginPage"));
 
         }
 
-      public void NavigateTo(string page)
-        {
-            if (page == "main")
+      public void NavigateTo(string pageName)
+      {
+          var page = ArcPageHandler.GetPage(pageName);
+            if (page !=null)
             {
-                MainFrame.Navigate(_mainPage);
+                MainFrame.Navigate(page);
             }
         }
 

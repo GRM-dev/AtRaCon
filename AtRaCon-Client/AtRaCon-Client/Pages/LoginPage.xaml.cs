@@ -30,7 +30,7 @@ namespace AtRaCon_Client.Pages
             var login = TB_Login.Text;
             var passwd = PB_Password.Password;
             Console.WriteLine("Login: "+login+", Passwd: "+passwd);
-            MainWindow.Instance.NavigateTo("main");
+            MainWindow.Instance.NavigateTo("MainPage");
         }
     }
 }

@@ -21,7 +21,7 @@
                 <RowDefinition/>
                 <RowDefinition Height="2*"/>
             </Grid.RowDefinitions>
-            <Label Grid.ColumnSpan="3" Content="AtRaCon Login" FontSize="26.667" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Rockwell Extra Bold" FontStyle="Oblique" FontStretch="UltraExpanded">
+            <Label Grid.ColumnSpan="3" Content="AtRaCon Client Login" FontSize="26.667" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Rockwell Extra Bold" FontStyle="Oblique" FontStretch="UltraExpanded">
                 <Label.Foreground>
                     <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0" SpreadMethod="Reflect">
                         <GradientStop Color="#FF740E0E" Offset="0.531"/>

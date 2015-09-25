@@ -3,10 +3,12 @@ description="AtRaCon Server Connector - to AtRaCon project."
 def archieveFileName="AtRaCon-Server"
 mainClassName="pl.grm.atracon.server.SMain"
 
+apply plugin: 'maven'
+
 dependencies {
 	compile group: 'mysql',name: 'mysql-connector-java', version: '5.1.36'
 	compile group: 'org.hibernate', name: 'hibernate-core', version: '5.0.1.Final'
-	compile files('libs/fluent-hibernate-core-0.1.2.jar')
+	compile 'com.github.v-ladynev:fluent-hibernate:-SNAPSHOT'
 }
 
 jar {
