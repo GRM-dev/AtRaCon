@@ -47,7 +47,7 @@ public class ClientConnector {
 	}
 
 	/**
-	 * @return
+	 * @return Connection
 	 */
 	public SConnection getConnection() {
 		return connection;

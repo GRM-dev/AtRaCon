@@ -4,7 +4,7 @@ import java.util.*;
 
 import pl.grm.atracon.lib.ARCLogger;
 import pl.grm.atracon.server.ServerMain;
-import pl.grm.atracon.server.commands.impl.CommandExit;
+import pl.grm.atracon.server.commands.impl.*;
 
 public class CommandManager {
 
@@ -17,6 +17,7 @@ public class CommandManager {
 		lastCommands = new ArrayList<>();
 		baseCommands = new HashMap<>();
 		add(Commands.EXIT, new CommandExit());
+		add(Commands.SHOW, new CommandShow());
 	}
 
 	/**

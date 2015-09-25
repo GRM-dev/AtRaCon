@@ -24,8 +24,14 @@ public class CommandExit implements IBaseCommand {
 	public boolean execute(Commands command, String args, ServerMain serverMain) throws Exception {
 		try {
 			if (args != null) {
+				args = args.trim();
+				if (!args.equals("")) {}
 				final long time;
-				time = Long.parseLong(args.trim());
+				if (args.equals("now")) {
+					time = 0;
+				} else {
+					time = Long.parseLong(args);
+				}
 				Thread task = new Thread(new Runnable() {
 
 					final long startTime = System.currentTimeMillis();
@@ -48,10 +54,12 @@ public class CommandExit implements IBaseCommand {
 				return true;
 			}
 		}
-		catch (NumberFormatException e) {
+		catch (NumberFormatException e)
+
+		{
 			ARCLogger.warn(e.getMessage());
 		}
-		ARCLogger.info("You should provide milisecunds time as param.");
+		ARCLogger.info("You should provide milisecunds time or 'now' as param.");
 		return false;
 	}
 

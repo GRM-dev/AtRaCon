@@ -11,8 +11,9 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 
-import pl.grm.atracon.lib.*;
+import pl.grm.atracon.lib.ARCLogger;
 import pl.grm.atracon.lib.conf.ConfigDB;
+import pl.grm.atracon.lib.devices.*;
 import pl.grm.atracon.lib.rmi.DBHandler;
 import pl.grm.atracon.server.conf.ConfigParams;
 import pl.grm.atracon.server.devices.*;
@@ -76,14 +77,15 @@ public class DBHandlerImpl implements DBHandler {
 		}
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
-	public List<RaspPiImpl> getRaspPiDevices() {
-		List<RaspPiImpl> devs = null;
+	public List<RaspPi> getRaspPiDevices() {
+		List<RaspPi> devs = null;
 		Session session = factory.openSession();
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
-			devs = session.createQuery("FROM RaspPi").list();
+			devs = session.createQuery("FROM RaspPiImpl").list();
 			tx.commit();
 		}
 		catch (HibernateException e) {
@@ -98,14 +100,47 @@ public class DBHandlerImpl implements DBHandler {
 		return devs;
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<AtmegaImpl> getAtmegaDevices(int raspPiId) {
-		List<AtmegaImpl> devs = null;
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see pl.grm.atracon.lib.rmi.DBHandler#getRaspPiDevice(int)
+	 */
+	@Override
+	public RaspPi getRaspPiDevice(int ID) {
+		RaspPi dev = null;
 		Session session = factory.openSession();
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
-			devs = session.createQuery("FROM Atmega atmega WHERE atmega.raspPi = " + raspPiId).list();
+			dev = (RaspPi) session.createQuery("FROM RaspPiImpl pi WHERE pi.id=" + ID).uniqueResult();
+			tx.commit();
+		}
+		catch (HibernateException e) {
+			if (tx != null) {
+				tx.rollback();
+			}
+			ARCLogger.error(e);
+		}
+		finally {
+			closeSession(session);
+		}
+		return dev;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see pl.grm.atracon.lib.rmi.DBHandler#getAtmegaDevices()
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Atmega> getAtmegaDevices() {
+		List<Atmega> devs = null;
+		Session session = factory.openSession();
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			devs = session.createQuery("FROM AtmegaImpl").list();
 			tx.commit();
 		}
 		catch (HibernateException e) {
@@ -120,14 +155,15 @@ public class DBHandlerImpl implements DBHandler {
 		return devs;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
-	public List<RegisterImpl> getAllRegistry() {
-		List<RegisterImpl> devs = null;
+	public List<Atmega> getAtmegaDevices(int raspPiId) {
+		List<Atmega> devs = null;
 		Session session = factory.openSession();
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
-			devs = session.createQuery("FROM Register").list();
+			devs = session.createQuery("FROM AtmegaImpl atmega WHERE atmega.raspPi = " + raspPiId).list();
 			tx.commit();
 		}
 		catch (HibernateException e) {
@@ -140,5 +176,111 @@ public class DBHandlerImpl implements DBHandler {
 			closeSession(session);
 		}
 		return devs;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see pl.grm.atracon.lib.rmi.DBHandler#getAtmegaDevice(int, int)
+	 */
+	@Override
+	public Atmega getAtmegaDevice(int raspPiId, int atmegaPort) {
+		Atmega dev = null;
+		Session session = factory.openSession();
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			String query = "FROM AtmegaImpl atm WHERE atm.raspPi = " + raspPiId + " AND atm.id = " + atmegaPort;
+			dev = (Atmega) session.createQuery(query).uniqueResult();
+			tx.commit();
+		}
+		catch (HibernateException e) {
+			if (tx != null) {
+				tx.rollback();
+			}
+			ARCLogger.error(e);
+		}
+		finally {
+			closeSession(session);
+		}
+		return dev;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see pl.grm.atracon.lib.rmi.DBHandler#getAtmegaDevice(int)
+	 */
+	@Override
+	public Atmega getAtmegaDevice(int atmegaId) {
+		Atmega dev = null;
+		Session session = factory.openSession();
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			String query = "FROM AtmegaImpl atmega WHERE atmega.id = " + atmegaId;
+			dev = (Atmega) session.createQuery(query).uniqueResult();
+			tx.commit();
+		}
+		catch (HibernateException e) {
+			if (tx != null) {
+				tx.rollback();
+			}
+			ARCLogger.error(e);
+		}
+		finally {
+			closeSession(session);
+		}
+		return dev;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Register> getAllRegistry() {
+		List<Register> devs = null;
+		Session session = factory.openSession();
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			devs = session.createQuery("FROM RegisterImpl").list();
+			tx.commit();
+		}
+		catch (HibernateException e) {
+			if (tx != null) {
+				tx.rollback();
+			}
+			ARCLogger.error(e);
+		}
+		finally {
+			closeSession(session);
+		}
+		return devs;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see pl.grm.atracon.lib.rmi.DBHandler#getRegister(int)
+	 */
+	@Override
+	public Register getRegister(int regId) {
+		Register dev = null;
+		Session session = factory.openSession();
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			dev = (Register) session.createQuery("FROM RegisterImpl reg WHERE reg.id = " + regId).uniqueResult();
+			tx.commit();
+		}
+		catch (HibernateException e) {
+			if (tx != null) {
+				tx.rollback();
+			}
+			ARCLogger.error(e);
+		}
+		finally {
+			closeSession(session);
+		}
+		return dev;
 	}
 }

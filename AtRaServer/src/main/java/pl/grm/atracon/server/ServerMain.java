@@ -13,7 +13,7 @@ import org.hibernate.HibernateException;
 
 import pl.grm.atracon.lib.ARCLogger;
 import pl.grm.atracon.lib.conf.*;
-import pl.grm.atracon.lib.rmi.IAtRaConRemoteController;
+import pl.grm.atracon.lib.rmi.*;
 import pl.grm.atracon.server.commands.*;
 import pl.grm.atracon.server.conf.*;
 import pl.grm.atracon.server.db.DBHandlerImpl;
@@ -213,6 +213,14 @@ public class ServerMain {
 		}
 		executorClientsService.shutdownNow();
 		dbHandler.closeConnection();
+	}
+
+	public IAtRaConRemoteController getARCServer() {
+		return arcServer;
+	}
+
+	public DBHandler getDatabase() {
+		return dbHandler;
 	}
 
 	public SConnection getClient() {
