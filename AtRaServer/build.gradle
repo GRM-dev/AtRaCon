@@ -8,7 +8,7 @@ apply plugin: 'maven'
 dependencies {
 	compile group: 'mysql',name: 'mysql-connector-java', version: '5.1.36'
 	compile group: 'org.hibernate', name: 'hibernate-core', version: '5.0.1.Final'
-	compile 'com.github.v-ladynev:fluent-hibernate:-SNAPSHOT'
+	compile group: 'com.github.v-ladynev', name: 'fluent-hibernate-core', version: '0.1.3'
 }
 
 jar {

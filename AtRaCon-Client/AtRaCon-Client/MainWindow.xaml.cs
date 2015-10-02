@@ -30,7 +30,7 @@ namespace AtRaCon_Client
             InitializeComponent();
             ArcPageHandler.AddPage(new LoginPage());
             ArcPageHandler.AddPage(new MainPage());
-            var client = new AtRaConClient();
+            var client = new AtRaConClient(this);
             MainFrame.Navigate(ArcPageHandler.GetPage("LoginPage"));
 
         }

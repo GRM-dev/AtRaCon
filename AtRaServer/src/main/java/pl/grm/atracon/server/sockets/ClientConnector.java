@@ -28,6 +28,12 @@ public class ClientConnector {
 		task = new ServerTask();
 	}
 
+	/**
+	 * Stops the thread in waiting for connection of client. It's go on after
+	 * connection establishment or on interruptConnection()
+	 * 
+	 * @throws ClassNotFoundException
+	 */
 	public void waitForConnection() throws ClassNotFoundException {
 		try {
 			connection = ConnectionFactory.establishConnection(null, port, task, ConnectioSide.SERVER);

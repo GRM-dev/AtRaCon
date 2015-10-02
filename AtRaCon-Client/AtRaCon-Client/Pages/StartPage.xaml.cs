@@ -16,24 +16,13 @@ using System.Windows.Shapes;
 namespace AtRaCon_Client.Pages
 {
     /// <summary>
-    /// Interaction logic for MainPage.xaml
+    /// Interaction logic for StartPage.xaml
     /// </summary>
-    public partial class MainPage : Page
+    public partial class StartPage : Page
     {
-        public MainPage()
+        public StartPage()
         {
             InitializeComponent();
-        }
-
-        private void DevList_Expander_Expand(object sender, RoutedEventArgs e)
-        {
-            Console.WriteLine("Refreshing List of Raspberry Pi Devices");
-
-        }
-
-        private void RegList_Expander_Expand(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }

@@ -7,8 +7,37 @@
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
       Title="MainPage">
-
-    <Grid>
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+            <Button Content="File"/>
+            <Button Content="Tools"/>
+            <Button Content="Settings"/>
+            <Button Content="Help"/>
+        </StackPanel>
+        <StackPanel DockPanel.Dock="Left">
+            <Expander x:Name="devList_Expander" Header="Devices" Expanded="DevList_Expander_Expand">
+                <StackPanel x:Name="devListPanel" Background="#FFE5E5E5">
+                    <Label x:Name="devRefresh_Lbl" Content="Refresh"/>
+                </StackPanel>
+            </Expander>
+            <Expander x:Name="regList_Expander" Header="Registry" Expanded="RegList_Expander_Expand">
+                <StackPanel x:Name="regList_Panel">
+                    <Label x:Name="regRefresh_Lbl" Content="Refresh"/>
+                </StackPanel>
+            </Expander>
+        </StackPanel>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5*"/>
+                <ColumnDefinition Width="15*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <DockPanel Grid.Column="2">
+            
+            </DockPanel>
         
-    </Grid>
+        </Grid>
+    </DockPanel>
 </Page>
