@@ -54,7 +54,7 @@
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <TextBlock FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <Hyperlink  NavigateUri="http://google.com">
+                    <Hyperlink  NavigateUri="http://www.google.com">
                         Forgot Password
                     </Hyperlink>
                 </TextBlock>
